@@ -28,8 +28,7 @@
 ;;
 ;;   Basic steps to setup:
 ;;
-;;    (add-to-list 'load-path
-;;                 "~/path/to/mix.el/")
+;;    (add-to-list 'load-path "~/path/to/mix.el/")
 ;;    (require 'mix)
 ;;    (global-mix-mode)
 ;;
