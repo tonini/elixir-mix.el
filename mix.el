@@ -44,42 +44,45 @@
 (defvar mix-buffer-name "*MIX*"
   "Name of the mix output buffer.")
 
-(defvar mix-elixir-project-root-indicators
+(defvar mix--elixir-project-root-indicators
   '("mix.exs" "mix.lock" ".git")
   "list of files and directories which indicate a elixir project root.")
 
-(defun mix-elixir-project-root-directory-p (a-directory)
+(defun mix--elixir-project-root-directory-p (a-directory)
   "Returns t if a-directory is the elixir project root"
   (equal a-directory (file-name-directory (directory-file-name a-directory))))
 
-(defun mix-elixir-project-root (&optional directory)
+(defun mix--elixir-project-root (&optional directory)
   "Finds the root directory of the project by walking the
    directory tree until it finds a elixir project root indicator."
   (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory))))
          (present-files (directory-files directory)))
-    (cond ((mix-elixir-project-root-directory-p directory) nil)
-          ((> (length (intersection present-files mix-elixir-project-root-indicators :test 'string=)) 0) directory)
-          (t (mix-elixir-project-root (file-name-directory (directory-file-name directory)))))))
+    (cond ((mix--elixir-project-root-directory-p directory) nil)
+          ((> (length (intersection present-files mix--elixir-project-root-indicators :test 'string=)) 0) directory)
+          (t (mix--elixir-project-root (file-name-directory (directory-file-name directory)))))))
 
-(defun mix-get-buffer (name)
+(defun mix--get-buffer (name)
   "Get and kills a buffer if exists and returns a new one."
   (let ((buffer (get-buffer name)))
     (when buffer (kill-buffer buffer))
     (generate-new-buffer name)))
 
-(defun mix-buffer-setup (buffer)
+(defun mix--buffer-setup (buffer)
   "setup the mix buffer before display."
   (display-buffer buffer)
   (with-current-buffer buffer
     (setq buffer-read-only t)
     (local-set-key "q" 'quit-window)))
 
+(defun mix--run-command-async (command)
+  (let ((buffer (mix--get-buffer mix-buffer-name)))
+    (async-shell-command command buffer)
+    (mix--buffer-setup buffer)))
+
 (defun mix-new (name)
   "create a new elixir project with mix."
   (interactive "Gmix new: ")
-  (let ((buffer (mix-get-buffer mix-buffer-name)))
-    (async-shell-command (format "%s new %s" mix-command name) buffer)
-    (mix-buffer-setup buffer)))
+  (mix--run-command-async (format "%s new %s" mix-command name)))
 
 (defun mix-test ()
   "run the whole elixir test suite."
@@ -104,9 +107,7 @@
 (defun mix-help (command)
   "show a help for a specific mix command."
   (interactive "Mmix help: ")
-  (let ((buffer (mix-get-buffer mix-buffer-name)))
-    (async-shell-command (format "%s help %s" mix-command command) buffer)
-    (mix-buffer-setup buffer)))
+  (mix--run-command-async (format "%s help %s" mix-command command)))
 
 (defun mix-execute (command)
   "Run a mix command."
@@ -116,12 +117,10 @@
          (error "Please use the `mix-new (name)` function to create a new elixir project."))
         ((string-match "^help" command)
          (error "Please use the `mix-help (name)` function to get a mix command specific help.")))
-  (let ((project-root (mix-elixir-project-root)))
+  (let ((project-root (mix--elixir-project-root)))
     (when (not project-root) (error "Couldn't find any elixir project root."))
-    (let ((buffer (mix-get-buffer mix-buffer-name)))
-      (setq default-directory (mix-elixir-project-root))
-      (async-shell-command (format "%s %s" mix-command command) buffer)
-      (mix-buffer-setup buffer))))
+    (setq default-directory (mix--elixir-project-root))
+    (mix--run-command-async (format "%s %s" mix-command command))))
 
 ;;;###autoload
 (define-minor-mode global-mix-mode
