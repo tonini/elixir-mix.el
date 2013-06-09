@@ -116,7 +116,7 @@
         ((string-match "^new" command)
          (error "Please use the `mix-new (name)` function to create a new elixir project."))
         ((string-match "^help" command)
-         (error "Please use the `mix-help (name)` function to get a mix command specific help.")))
+         (error "Please use the `mix-help (command)` function to get a mix command specific help.")))
   (let ((project-root (mix--elixir-project-root)))
     (when (not project-root) (error "Couldn't find any elixir project root."))
     (setq default-directory (mix--elixir-project-root))
