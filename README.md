@@ -12,12 +12,14 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
 
 ## Usage
 
-* `global-mix-mode` enable or disable mix.el
-
 <table>
     <tr>
         <th>Command (For the <code>M-x</code> prompt.)</th>
         <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>global-mix-mode</code></td>
+        <td>enable or disable mix.el</td>
     </tr>
     <tr>
         <td><code>mix-new</code></td>
@@ -51,13 +53,13 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
 
 ## Configuration
 
-* `mix-command` Path to the executable `mix` shell command.
+`mix-command` Path to the executable `mix` shell command.
 
 ```lisp
 (setq mix-command "/usr/local/bin/mix")
 ```
 
-* `mix-buffer-name` Name for the buffer used for mix shell output.
+`mix-buffer-name` Name of the buffer used for mix shell output.
 
 ```lisp
 (setq mix-buffer-name "*MIX*")
