@@ -1,13 +1,13 @@
-# mix.el
+# elixir-mix.el
 
 Integration of Elixir's building and deployment tool: mix into Emacs.
 
 ## Installation
 
 ```lisp
-    (add-to-list 'load-path "~/path/to/mix.el/")
-    (require 'mix)
-    (global-mix-mode)
+    (add-to-list 'load-path "~/path/to/elixir-mix.el/")
+    (require 'elixir-mix)
+    (global-elixir-mix-mode)
 ```
 
 ## Usage
@@ -18,51 +18,51 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
         <th>Description</th>
     </tr>
     <tr>
-        <td><code>global-mix-mode</code></td>
-        <td>enable or disable mix.el</td>
+        <td><code>global-elixir-mix-mode</code></td>
+        <td>enable or disable elixir-mix.el</td>
     </tr>
     <tr>
-        <td><code>mix-new</code></td>
+        <td><code>elixir-mix-new</code></td>
         <td>Create a new Elixir application.</td>
     </tr>
      <tr>
-        <td><code>mix-test</code></td>
+        <td><code>elixir-mix-test</code></td>
         <td>Run the whole Elixir application test suite.</td>
     </tr>
     <tr>
-        <td><code>mix-test-this-buffer</code></td>
+        <td><code>elixir-mix-test-this-buffer</code></td>
         <td>Run the current buffer through <code>mix test</code> command.</td>
     </tr>
     <tr>
-        <td><code>mix-compile</code></td>
+        <td><code>elixir-mix-compile</code></td>
         <td>Compile the whole Elixir application.</td>
     </tr>
     <tr>
-        <td><code>mix-run</code></td>
+        <td><code>elixir-mix-run</code></td>
         <td>Runs the given expression in the Elixir application context.</td>
     </tr>
     <tr>
-        <td><code>mix-help</code></td>
+        <td><code>elixir-mix-help</code></td>
         <td>Show help output for a specific mix command.</td>
     </tr>
     <tr>
-        <td><code>mix-execute</code></td>
+        <td><code>elixir-mix-execute</code></td>
         <td>Run any command in the context of the application.</td>
     </tr>
 </table>
 
 ## Configuration
 
-`mix-command` Path to the executable `mix` shell command.
+`elixir-mix-command` Path to the executable `mix` shell command.
 
 ```lisp
-(setq mix-command "/usr/local/bin/mix")
+(setq elixir-mix-command "/usr/local/bin/mix")
 ```
 
-`mix-buffer-name` Name of the buffer used for mix shell output.
+`elixir-mix-buffer-name` Name of the buffer used for mix shell output.
 
 ```lisp
-(setq mix-buffer-name "*MIX*")
+(setq elixir-mix-buffer-name "*MIX*")
 ```
 
 ## Thanks
@@ -77,7 +77,7 @@ learned a lot of emacs lisp from. :-)
 
 ## Contributions are very welcome!
 
-1. Fork mix.el
+1. Fork elixir-mix.el
 2. Create a topic branch - `git checkout -b my_branch`
 4. Push to your branch - `git push origin my_branch`
 5. Send me a pull-request for your topic branch

@@ -1,13 +1,13 @@
-;;; mix.el --- Emacs integration for Elixir's mix
+;;; elixir-mix.el --- Emacs integration for Elixir's elixir-mix
 ;;
-;; Filename: mix.el
+;; Filename: elixir-mix.el
 ;; Description: Integration of Elixir's building and deployment tool: mix into Emacs.
 ;; Author: Samuel Tonini
 ;; Maintainer: Samuel Tonini
 ;; Created: So Jun  9 10:01:02 2013 (+0200)
 ;; Version: 0.0.1
-;; URL: http://github.com/tonini/mix.el
-;; Keywords: elixir, mix
+;; URL: http://github.com/tonini/elixir-mix.el
+;; Keywords: elixir, mix, elixir-mix
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -28,48 +28,48 @@
 ;;
 ;;   Basic steps to setup:
 ;;
-;;    (add-to-list 'load-path "~/path/to/mix.el/")
-;;    (require 'mix)
-;;    (global-mix-mode)
+;;    (add-to-list 'load-path "~/path/to/elixir-mix.el/")
+;;    (require 'elixir-mix)
+;;    (global-elixir-mix-mode)
 ;;
 ;;   Interesting variables are:
 ;;
-;;    `mix-command`
+;;    `elixir-mix-command`
 ;;
 ;;    Path to the executable <mix> command
 ;;
 ;;
-;;    `mix-buffer-name`
+;;    `elixir-mix-buffer-name`
 ;;
 ;;    Name for the buffer used for mix shell output.
 ;;
 ;;    Major commands are:
 ;;
-;;    M-x mix-new
+;;    M-x elixir-mix-new
 ;;
 ;;        Create a new Elixir application.
 ;;
-;;    M-x mix-test
+;;    M-x elixir-mix-test
 ;;
 ;;        Run the whole Elixir application test suite.
 ;;
-;;    M-x mix-test-this-buffer
+;;    M-x elixir-mix-test-this-buffer
 ;;
 ;;        Run the current buffer through <mix test> command.
 ;;
-;;    M-x mix-compile
+;;    M-x elixir-mix-compile
 ;;
 ;;        Compile the whole Elixir application.
 ;;
-;;    M-x mix-run
+;;    M-x elixir-mix-run
 ;;
 ;;        Runs the given expression in the Elixir application context.
 ;;
-;;    M-x mix-help
+;;    M-x elixir-mix-help
 ;;
 ;;        Show help output for a specific mix command.
 ;;
-;;    M-x mix-execute
+;;    M-x elixir-mix-execute
 ;;
 ;;        Run any command in the context of the application,
 ;;        except `help` and `new`.
@@ -79,98 +79,98 @@
 
 ;;; Code:
 
-(defcustom mix-command "mix"
+(defcustom elixir-mix-command "mix"
   "The shell command for mix"
   :type 'string
-  :group 'mix)
+  :group 'elixir-mix)
 
-(defvar mix-buffer-name "*MIX*"
+(defvar elixir-mix-buffer-name "*MIX*"
   "Name of the mix output buffer.")
 
-(defvar mix--elixir-project-root-indicators
+(defvar elixir-mix--elixir-project-root-indicators
   '("mix.exs" "mix.lock" ".git")
   "List of files and directories which indicate a elixir project root.")
 
-(defun mix--elixir-project-root-directory-p (a-directory)
+(defun elixir-mix--elixir-project-root-directory-p (a-directory)
   "Returns t if a-directory is the elixir project root"
   (equal a-directory (file-name-directory (directory-file-name a-directory))))
 
-(defun mix--elixir-project-root (&optional directory)
+(defun elixir-mix--elixir-project-root (&optional directory)
   "Finds the root directory of the project by walking the
    directory tree until it finds a elixir project root indicator."
   (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory))))
          (present-files (directory-files directory)))
-    (cond ((mix--elixir-project-root-directory-p directory) nil)
-          ((> (length (intersection present-files mix--elixir-project-root-indicators :test 'string=)) 0) directory)
-          (t (mix--elixir-project-root (file-name-directory (directory-file-name directory)))))))
+    (cond ((elixir-mix--elixir-project-root-directory-p directory) nil)
+          ((> (length (intersection present-files elixir-mix--elixir-project-root-indicators :test 'string=)) 0) directory)
+          (t (elixir-mix--elixir-project-root (file-name-directory (directory-file-name directory)))))))
 
-(defun mix--get-buffer (name)
+(defun elixir-mix--get-buffer (name)
   "Get and kills a buffer if exists and returns a new one."
   (let ((buffer (get-buffer name)))
     (when buffer (kill-buffer buffer))
     (generate-new-buffer name)))
 
-(defun mix--buffer-setup (buffer)
+(defun elixir-mix--buffer-setup (buffer)
   "Setup the mix buffer before display."
   (display-buffer buffer)
   (with-current-buffer buffer
     (setq buffer-read-only t)
     (local-set-key "q" 'quit-window)))
 
-(defun mix--run-command-async (command)
-  (let ((buffer (mix--get-buffer mix-buffer-name)))
-    (async-shell-command (format "%s %s" mix-command command) buffer)
-    (mix--buffer-setup buffer)))
+(defun elixir-mix--run-command-async (command)
+  (let ((buffer (elixir-mix--get-buffer elixir-mix-buffer-name)))
+    (async-shell-command (format "%s %s" elixir-mix-command command) buffer)
+    (elixir-mix--buffer-setup buffer)))
 
-(defun mix-new (name)
+(defun elixir-mix-new (name)
   "Create a new elixir project with mix."
   (interactive "Gmix new: ")
-  (mix--run-command-async (format "new %s" name)))
+  (elixir-mix--run-command-async (format "new %s" name)))
 
-(defun mix-test ()
+(defun elixir-mix-test ()
   "Run the whole elixir test suite."
   (interactive)
-  (mix-execute "test"))
+  (elixir-mix-execute "test"))
 
-(defun mix-test-this-buffer ()
+(defun elixir-mix-test-this-buffer ()
   "Run the current buffer through mix test."
   (interactive)
-  (mix-execute (format "test %s" buffer-file-name)))
+  (elixir-mix-execute (format "test %s" buffer-file-name)))
 
-(defun mix-compile ()
+(defun elixir-mix-compile ()
   "Compile the whole elixir project."
   (interactive)
-  (mix-execute "compile"))
+  (elixir-mix-execute "compile"))
 
-(defun mix-run (code)
+(defun elixir-mix-run (code)
   "Runs the given expression in the elixir application context."
   (interactive "Mmix run: ")
-  (mix-execute (format "run '%s'" code)))
+  (elixir-mix-execute (format "run '%s'" code)))
 
-(defun mix-help (command)
+(defun elixir-mix-help (command)
   "Show help output for a specific mix command."
   (interactive "Mmix help: ")
-  (mix--run-command-async (format "help %s" command)))
+  (elixir-mix--run-command-async (format "help %s" command)))
 
-(defun mix-execute (command)
+(defun elixir-mix-execute (command)
   "Run a mix command."
-  (interactive "MMix: ")
+  (interactive "Mmix: ")
   (cond ((string= command "") (error "There is no such command."))
         ((string-match "^new" command)
-         (error "Please use the `mix-new (name)` function to create a new elixir project."))
+         (error "Please use the `elixir-mix-new (name)` function to create a new elixir project."))
         ((string-match "^help" command)
-         (error "Please use the `mix-help (command)` function to get a mix command specific help.")))
-  (let ((project-root (mix--elixir-project-root)))
+         (error "Please use the `elixir-mix-help (command)` function to get a mix command specific help.")))
+  (let ((project-root (elixir-mix--elixir-project-root)))
     (when (not project-root) (error "Couldn't find any elixir project root."))
-    (setq default-directory (mix--elixir-project-root))
-    (mix--run-command-async command)))
+    (setq default-directory (elixir-mix--elixir-project-root))
+    (elixir-mix--run-command-async command)))
 
 ;;;###autoload
-(define-minor-mode global-mix-mode
-  "Toggle global-mix-mode for use elixir mix build tool within emacs."
+(define-minor-mode global-elixir-mix-mode
+  "Toggle global-elixir-mix-mode to use elixir's mix build tool within emacs."
   :global t)
 
-(provide 'mix)
+(provide 'elixir-mix)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; mix.el ends here
+;;; elixir-mix.el ends here
