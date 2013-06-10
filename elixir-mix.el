@@ -65,6 +65,26 @@
 ;;
 ;;        Runs the given expression in the Elixir application context.
 ;;
+;;    M-x elixir-mix-deps-with-prompt
+;;
+;;        Prompt for mix deps commands.
+;;
+;;    M-x elixir-mix-local-with-prompt
+;;
+;;        Prompt for mix local commands.
+;;
+;;    M-x elixir-mix-deps-install
+;;
+;;        Prompt for mix local.install <path> or <url>.
+;;
+;;    M-x elixir-mix-deps-install-with-path
+;;
+;;        Runs deps.install and prompt for a <path> as argument.
+;;
+;;    M-x elixir-mix-deps-install-with-url
+;;
+;;        Runs deps.install and prompt for a <url> as argument.
+;;
 ;;    M-x elixir-mix-help
 ;;
 ;;        Show help output for a specific mix command.
@@ -91,6 +111,18 @@
   '("mix.exs" "mix.lock" ".git")
   "List of files and directories which indicate a elixir project root.")
 
+(defvar elixir-mix--deps-commands
+  '("deps" "deps.clean" "deps.compile" "deps.get" "deps.unlock" "deps.unlock")
+  "List of all deps.* available commands.")
+
+(defvar elixir-mix--local-commands
+  '("local" "local.install" "local.rebar" "local.uninstall")
+  "List of all local.* available commands.")
+
+(defvar elixir-mix--local-install-option-types
+  '("path" "url")
+  "List of local.install option types.")
+
 (defun elixir-mix--elixir-project-root-directory-p (a-directory)
   "Returns t if a-directory is the elixir project root"
   (equal a-directory (file-name-directory (directory-file-name a-directory))))
@@ -114,13 +146,16 @@
   "Setup the mix buffer before display."
   (display-buffer buffer)
   (with-current-buffer buffer
-    (setq buffer-read-only t)
+    (setq buffer-read-only nil)
     (local-set-key "q" 'quit-window)))
 
 (defun elixir-mix--run-command-async (command)
   (let ((buffer (elixir-mix--get-buffer elixir-mix-buffer-name)))
     (async-shell-command (format "%s %s" elixir-mix-command command) buffer)
     (elixir-mix--buffer-setup buffer)))
+
+(defun elixir-mix--completing-read (prompt command-list)
+  (completing-read prompt command-list nil t nil nil (car command-list)))
 
 (defun elixir-mix-new (name)
   "Create a new elixir project with mix."
@@ -146,6 +181,40 @@
   "Runs the given expression in the elixir application context."
   (interactive "Mmix run: ")
   (elixir-mix-execute (format "run '%s'" code)))
+
+(defun elixir-mix-deps-with-prompt (command)
+  "Prompt for mix deps commands."
+  (interactive
+   (list (elixir-mix--completing-read "mix deps: " elixir-mix--deps-commands)))
+  (elixir-mix-execute command))
+
+(defun elixir-mix-local-with-prompt (command)
+  "Prompt for mix local commands."
+  (interactive
+   (list (elixir-mix--completing-read "mix local: " elixir-mix--local-commands)))
+  (if (string= command "local.install")
+      (call-interactively 'elixir-mix-deps-install)
+    (elixir-mix-execute command)))
+
+(defun elixir-mix-deps-install (path-or-url)
+  "Prompt for mix local.install <path> or <url>."
+  (interactive
+   (list (completing-read "mix local.install FORMAT: "
+                          elixir-mix--local-install-option-types
+                          nil t nil nil (car elixir-mix--local-install-option-types))))
+  (if (string= path-or-url (car elixir-mix--local-install-option-types))
+      (call-interactively 'elixir-mix-deps-install-with-path)
+    (call-interactively 'elixir-mix-deps-install-with-url)))
+
+(defun elixir-mix-deps-install-with-path (path)
+  "Runs deps.install and prompt for a <path> as argument."
+  (interactive "fmix local.install PATH: ")
+  (elixir-mix-execute (format "local.install %s" path)))
+
+(defun elixir-mix-deps-install-with-url (url)
+  "Runs deps.install and prompt for a <url> as argument."
+  (interactive "Mmix local.install URL: ")
+  (elixir-mix-execute (format "local.install %s" url)))
 
 (defun elixir-mix-help (command)
   "Show help output for a specific mix command."
