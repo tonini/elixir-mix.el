@@ -5,9 +5,9 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
 ## Installation
 
 ```lisp
-    (add-to-list 'load-path "~/path/to/elixir-mix.el/")
-    (require 'elixir-mix)
-    (global-elixir-mix-mode)
+(add-to-list 'load-path "~/path/to/elixir-mix.el/")
+(require 'elixir-mix)
+(global-elixir-mix-mode)
 ```
 
 ## Usage
