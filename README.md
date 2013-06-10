@@ -42,6 +42,26 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
         <td>Runs the given expression in the Elixir application context.</td>
     </tr>
     <tr>
+        <td><code>elixir-mix-deps-with-prompt</code></td>
+        <td>Prompt for <code>mix deps</code> commands.</td>
+    </tr>
+    <tr>
+        <td><code>elixir-mix-local-with-prompt</code></td>
+        <td>Prompt for <code>mix local</code> commands.</td>
+    </tr>
+    <tr>
+        <td><code>elixir-mix-deps-install</code></td>
+        <td>Prompt for <code>mix local.install</code> PATH or URL.</td>
+    </tr>
+    <tr>
+        <td><code>elixir-mix-deps-install-with-path</code></td>
+        <td>Runs <code>mix deps.install</code> and prompt for a PATH as argument.</td>
+    </tr>
+    <tr>
+        <td><code>elixir-mix-deps-install-with-url</code></td>
+        <td>Runs <code>mix deps.install</code> and prompt for a URL as argument.</td>
+    </tr>
+    <tr>
         <td><code>elixir-mix-help</code></td>
         <td>Show help output for a specific mix command.</td>
     </tr>
