@@ -119,13 +119,13 @@
 
 (defun mix--run-command-async (command)
   (let ((buffer (mix--get-buffer mix-buffer-name)))
-    (async-shell-command command buffer)
+    (async-shell-command (format "%s %s" mix-command command) buffer)
     (mix--buffer-setup buffer)))
 
 (defun mix-new (name)
   "Create a new elixir project with mix."
   (interactive "Gmix new: ")
-  (mix--run-command-async (format "%s new %s" mix-command name)))
+  (mix--run-command-async (format "new %s" name)))
 
 (defun mix-test ()
   "Run the whole elixir test suite."
@@ -150,7 +150,7 @@
 (defun mix-help (command)
   "Show help output for a specific mix command."
   (interactive "Mmix help: ")
-  (mix--run-command-async (format "%s help %s" mix-command command)))
+  (mix--run-command-async (format "help %s" command)))
 
 (defun mix-execute (command)
   "Run a mix command."
@@ -163,7 +163,7 @@
   (let ((project-root (mix--elixir-project-root)))
     (when (not project-root) (error "Couldn't find any elixir project root."))
     (setq default-directory (mix--elixir-project-root))
-    (mix--run-command-async (format "%s %s" mix-command command))))
+    (mix--run-command-async command)))
 
 ;;;###autoload
 (define-minor-mode global-mix-mode
