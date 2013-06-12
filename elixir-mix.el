@@ -1,4 +1,4 @@
-;;; elixir-mix.el --- Emacs integration for Elixir's elixir-mix
+;;; elixir-mix.el --- Emacs integration for Elixir's mix
 ;;
 ;; Filename: elixir-mix.el
 ;; Description: Integration of Elixir's building and deployment tool: mix into Emacs.
