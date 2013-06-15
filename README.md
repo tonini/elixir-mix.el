@@ -4,10 +4,20 @@ Integration of Elixir's building and deployment tool: mix into Emacs.
 
 ## Installation
 
+### ELPA
+
+elixir-mix.el is available through
+[Marmalade](http://marmalade-repo.org/) and
+[MELPA](http://melpa.milkbox.net/). Just run `M-x package-install
+[RET] elixir-mix [RET]`
+inside your emacs and you're ready to go.
+
+### Manual
+
 ```lisp
 (add-to-list 'load-path "~/path/to/elixir-mix.el/")
 (require 'elixir-mix)
-(global-elixir-mix-mode)
+(global-elixir-mix-mode) ;; enable elixir-mix
 ```
 
 ## Usage
