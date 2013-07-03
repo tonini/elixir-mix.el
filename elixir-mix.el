@@ -26,7 +26,7 @@
 
 ;;; Commentary:
 ;;
-;;   Basic steps to setup:
+;;   Manual Installation:
 ;;
 ;;    (add-to-list 'load-path "~/path/to/elixir-mix.el/")
 ;;    (require 'elixir-mix)
@@ -34,67 +34,66 @@
 ;;
 ;;   Interesting variables are:
 ;;
-;;    `elixir-mix-command`
+;;       `elixir-mix-command`
 ;;
-;;    Path to the executable <mix> command
+;;            Path to the executable <mix> command
 ;;
+;;       `elixir-mix-buffer-name`
 ;;
-;;    `elixir-mix-buffer-name`
+;;            Name for the buffer used for mix shell output.
 ;;
-;;    Name for the buffer used for mix shell output.
+;;   Major commands are:
 ;;
-;;    Major commands are:
+;;        M-x elixir-mix-new
 ;;
-;;    M-x elixir-mix-new
+;;            Create a new Elixir application.
 ;;
-;;        Create a new Elixir application.
+;;        M-x elixir-mix-test
 ;;
-;;    M-x elixir-mix-test
+;;            Run the whole Elixir application test suite.
 ;;
-;;        Run the whole Elixir application test suite.
+;;        M-x elixir-mix-test-this-buffer
 ;;
-;;    M-x elixir-mix-test-this-buffer
+;;            Run the current buffer through <mix test> command.
 ;;
-;;        Run the current buffer through <mix test> command.
+;;        M-x elixir-mix-compile
 ;;
-;;    M-x elixir-mix-compile
+;;            Compile the whole Elixir application.
 ;;
-;;        Compile the whole Elixir application.
+;;        M-x elixir-mix-run
 ;;
-;;    M-x elixir-mix-run
+;;            Runs the given expression in the Elixir application context.
 ;;
-;;        Runs the given expression in the Elixir application context.
+;;        M-x elixir-mix-deps-with-prompt
 ;;
-;;    M-x elixir-mix-deps-with-prompt
+;;            Prompt for mix deps commands.
 ;;
-;;        Prompt for mix deps commands.
+;;        M-x elixir-mix-local-with-prompt
 ;;
-;;    M-x elixir-mix-local-with-prompt
+;;            Prompt for mix local commands.
 ;;
-;;        Prompt for mix local commands.
+;;        M-x elixir-mix-deps-install
 ;;
-;;    M-x elixir-mix-deps-install
+;;            Prompt for mix local.install <path> or <url>.
 ;;
-;;        Prompt for mix local.install <path> or <url>.
+;;        M-x elixir-mix-deps-install-with-path
 ;;
-;;    M-x elixir-mix-deps-install-with-path
+;;            Runs deps.install and prompt for a <path> as argument.
 ;;
-;;        Runs deps.install and prompt for a <path> as argument.
+;;        M-x elixir-mix-deps-install-with-url
 ;;
-;;    M-x elixir-mix-deps-install-with-url
+;;            Runs deps.install and prompt for a <url> as argument.
 ;;
-;;        Runs deps.install and prompt for a <url> as argument.
+;;        M-x elixir-mix-help
 ;;
-;;    M-x elixir-mix-help
+;;            Show help output for a specific mix command.
 ;;
-;;        Show help output for a specific mix command.
+;;        M-x elixir-mix-execute
 ;;
-;;    M-x elixir-mix-execute
-;;
-;;        Run any command in the context of the application,
-;;        except `help` and `new`.
-;;        Just run any command as you like, including arguments
-;;        for the specific command. (example: test --quick)
+;;            Run any command in the context of the application,
+;;            except `help` and `new`.
+;;            Just run any command as you like, including arguments
+;;            for the specific command. (example: test --quick)
 ;;
 
 ;;; Code:
