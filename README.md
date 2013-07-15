@@ -63,16 +63,16 @@ familiar with it.
         <td>Prompt for <code>mix local</code> commands.</td>
     </tr>
     <tr>
-        <td><code>elixir-mix-deps-install</code></td>
+        <td><code>elixir-mix-local-install</code></td>
         <td>Prompt for <code>mix local.install</code> PATH or URL.</td>
     </tr>
     <tr>
-        <td><code>elixir-mix-deps-install-with-path</code></td>
-        <td>Runs <code>mix deps.install</code> and prompt for a PATH as argument.</td>
+        <td><code>elixir-mix-local-install-with-path</code></td>
+        <td>Runs <code>mix local.install</code> and prompt for a PATH as argument.</td>
     </tr>
     <tr>
-        <td><code>elixir-mix-deps-install-with-url</code></td>
-        <td>Runs <code>mix deps.install</code> and prompt for a URL as argument.</td>
+        <td><code>elixir-mix-local-install-with-url</code></td>
+        <td>Runs <code>mix local.install</code> and prompt for a URL as argument.</td>
     </tr>
     <tr>
         <td><code>elixir-mix-help</code></td>

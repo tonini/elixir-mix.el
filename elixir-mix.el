@@ -72,17 +72,17 @@
 ;;
 ;;            Prompt for mix local commands.
 ;;
-;;        M-x elixir-mix-deps-install
+;;        M-x elixir-mix-local-install
 ;;
 ;;            Prompt for mix local.install <path> or <url>.
 ;;
-;;        M-x elixir-mix-deps-install-with-path
+;;        M-x elixir-mix-local-install-with-path
 ;;
-;;            Runs deps.install and prompt for a <path> as argument.
+;;            Runs local.install and prompt for a <path> as argument.
 ;;
-;;        M-x elixir-mix-deps-install-with-url
+;;        M-x elixir-mix-local-install-with-url
 ;;
-;;            Runs deps.install and prompt for a <url> as argument.
+;;            Runs local.install and prompt for a <url> as argument.
 ;;
 ;;        M-x elixir-mix-help
 ;;
@@ -192,26 +192,26 @@
   (interactive
    (list (elixir-mix--completing-read "mix local: " elixir-mix--local-commands)))
   (if (string= command "local.install")
-      (call-interactively 'elixir-mix-deps-install)
+      (call-interactively 'elixir-mix-local-install)
     (elixir-mix-execute command)))
 
-(defun elixir-mix-deps-install (path-or-url)
+(defun elixir-mix-local-install (path-or-url)
   "Prompt for mix local.install <path> or <url>."
   (interactive
    (list (completing-read "mix local.install FORMAT: "
                           elixir-mix--local-install-option-types
                           nil t nil nil (car elixir-mix--local-install-option-types))))
   (if (string= path-or-url (car elixir-mix--local-install-option-types))
-      (call-interactively 'elixir-mix-deps-install-with-path)
-    (call-interactively 'elixir-mix-deps-install-with-url)))
+      (call-interactively 'elixir-mix-local-install-with-path)
+    (call-interactively 'elixir-mix-local-install-with-url)))
 
-(defun elixir-mix-deps-install-with-path (path)
-  "Runs deps.install and prompt for a <path> as argument."
+(defun elixir-mix-local-install-with-path (path)
+  "Runs local.install and prompt for a <path> as argument."
   (interactive "fmix local.install PATH: ")
   (elixir-mix-execute (format "local.install %s" path)))
 
-(defun elixir-mix-deps-install-with-url (url)
-  "Runs deps.install and prompt for a <url> as argument."
+(defun elixir-mix-local-install-with-url (url)
+  "Runs local.install and prompt for a <url> as argument."
   (interactive "Mmix local.install URL: ")
   (elixir-mix-execute (format "local.install %s" url)))
 
