@@ -169,7 +169,17 @@
 (defun elixir-mix-test-this-buffer ()
   "Run the current buffer through mix test."
   (interactive)
-  (elixir-mix-execute (format "test %s" buffer-file-name)))
+  (elixir-mix--test-file buffer-file-name))
+
+(defun elixir-mix-test-file (filename)
+  "Run <mix test> with the given `filename`"
+  (interactive "Fmix test: ")
+  (elixir-mix--test-file filename))
+
+(defun elixir-mix--test-file (filename)
+  (when (not (file-exists-p filename))
+    (error "The given file doesn't exists."))
+  (elixir-mix-execute (format "test %s" filename)))
 
 (defun elixir-mix-compile ()
   "Compile the whole elixir project."
