@@ -47,6 +47,10 @@ familiar with it.
         <td>Run the current buffer through <code>mix test</code> command.</td>
     </tr>
     <tr>
+        <td><code>elixir-mix-test-file</code></td>
+        <td>Run a file through <code>mix test</code> command.</td>
+    </tr>
+    <tr>
         <td><code>elixir-mix-compile</code></td>
         <td>Compile the whole Elixir application.</td>
     </tr>
