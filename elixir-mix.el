@@ -56,6 +56,10 @@
 ;;
 ;;            Run the current buffer through <mix test> command.
 ;;
+;;        M-x elixir-mix-test-file
+;;
+;;            Run a file through <mix test> command.
+;;
 ;;        M-x elixir-mix-compile
 ;;
 ;;            Compile the whole Elixir application.
