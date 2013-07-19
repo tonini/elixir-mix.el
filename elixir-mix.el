@@ -193,7 +193,7 @@
 (defun elixir-mix-run (code)
   "Runs the given expression in the elixir application context."
   (interactive "Mmix run: ")
-  (elixir-mix-execute (format "run '%s'" code)))
+  (elixir-mix-execute (format "run -e '%s'" code)))
 
 (defun elixir-mix-deps-with-prompt (command)
   "Prompt for mix deps commands."
