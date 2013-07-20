@@ -103,13 +103,13 @@
 ;;            Run any command in the context of the application,
 ;;            except `help` and `new`.
 ;;            Just run any command as you like, including arguments
-;;            for the specific command. (example: test --quick)
+;;            for the specific command.  (example: test --quick)
 ;;
 
 ;;; Code:
 
 (defcustom elixir-mix-command "mix"
-  "The shell command for mix"
+  "The shell command for mix."
   :type 'string
   :group 'elixir-mix)
 
@@ -133,12 +133,12 @@
   "List of local.install option types.")
 
 (defun elixir-mix--elixir-project-root-directory-p (a-directory)
-  "Returns t if a-directory is the elixir project root"
+  "Return t if A-DIRECTORY is the elixir project root."
   (equal a-directory (file-name-directory (directory-file-name a-directory))))
 
 (defun elixir-mix--elixir-project-root (&optional directory)
   "Finds the root directory of the project by walking the
-   directory tree until it finds a elixir project root indicator."
+directory tree until it finds a elixir project root indicator."
   (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory))))
          (present-files (directory-files directory)))
     (cond ((elixir-mix--elixir-project-root-directory-p directory) nil)
@@ -188,7 +188,7 @@
 
 (defun elixir-mix--test-file (filename)
   (when (not (file-exists-p filename))
-    (error "The given file doesn't exists."))
+    (error "The given file doesn't exists"))
   (elixir-mix-execute (format "test %s" filename)))
 
 (defun elixir-mix-compile ()
@@ -243,13 +243,13 @@
 (defun elixir-mix-execute (command)
   "Run a mix command."
   (interactive "Mmix: ")
-  (cond ((string= command "") (error "There is no such command."))
+  (cond ((string= command "") (error "There is no such command"))
         ((string-match "^new" command)
-         (error "Please use the `elixir-mix-new (name)` function to create a new elixir project."))
+         (error "Please use the `elixir-mix-new (name)` function to create a new elixir project"))
         ((string-match "^help" command)
-         (error "Please use the `elixir-mix-help (command)` function to get a mix command specific help.")))
+         (error "Please use the `elixir-mix-help (command)` function to get a mix command specific help")))
   (let ((project-root (elixir-mix--elixir-project-root)))
-    (when (not project-root) (error "Couldn't find any elixir project root."))
+    (when (not project-root) (error "Couldn't find any elixir project root"))
     (setq default-directory (elixir-mix--elixir-project-root))
     (elixir-mix--run-command-async command)))
 
