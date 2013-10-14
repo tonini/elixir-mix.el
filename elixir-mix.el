@@ -116,9 +116,9 @@
 (defvar elixir-mix-buffer-name "*MIX*"
   "Name of the mix output buffer.")
 
-(defvar elixir-mix--elixir-project-root-indicators
-  '("mix.exs" "mix.lock" ".git")
-  "List of files and directories which indicate a elixir project root.")
+(defvar elixir-mix--elixir-project-root-indicator
+  "mix.exs"
+  "The file which indicate an elixir project root.")
 
 (defvar elixir-mix--deps-commands
   '("deps" "deps.clean" "deps.compile" "deps.get" "deps.unlock" "deps.unlock")
@@ -132,18 +132,11 @@
   '("path" "url")
   "List of local.install option types.")
 
-(defun elixir-mix--elixir-project-root-directory-p (a-directory)
-  "Return t if A-DIRECTORY is the elixir project root."
-  (equal a-directory (file-name-directory (directory-file-name a-directory))))
-
 (defun elixir-mix--elixir-project-root (&optional directory)
   "Finds the root directory of the project by walking the
-directory tree until it finds a elixir project root indicator."
-  (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory))))
-         (present-files (directory-files directory)))
-    (cond ((elixir-mix--elixir-project-root-directory-p directory) nil)
-          ((> (length (intersection present-files elixir-mix--elixir-project-root-indicators :test 'string=)) 0) directory)
-          (t (elixir-mix--elixir-project-root (file-name-directory (directory-file-name directory)))))))
+   directory tree until it finds a elixir project root indicator."
+  (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory)))))
+    (locate-dominating-file directory elixir-mix--elixir-project-root-indicator)))
 
 (defun elixir-mix--get-buffer (name)
   "Get and kills a buffer if exists and returns a new one."
