@@ -1,5 +1,7 @@
 # elixir-mix.el
 
+[![Build Status](https://travis-ci.org/tonini/elixir-mix.el.png?branch=introduce-testing)](https://travis-ci.org/tonini/elixir-mix.el)
+
 Integration of Elixir's building and deployment tool: mix into Emacs.
 
 ## Installation

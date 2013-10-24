@@ -1,0 +1,14 @@
+language: emacs-lisp
+
+env:
+  - EMACS=emacs24
+  - EMACS=emacs-snapshot
+
+before_script:
+  - export DEBIAN_FRONTEND='noninteractive'
+  - sudo apt-add-repository -y ppa:cassou/emacs
+  - sudo apt-get update -qq
+  - sudo apt-get install -yy emacs24 emacs24-el emacs24-common-non-dfsg emacs-snapshot emacs-snapshot-el
+
+script:
+  - make EMACS=${EMACS} test

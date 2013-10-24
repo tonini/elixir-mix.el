@@ -159,6 +159,12 @@
 (defun elixir-mix--completing-read (prompt command-list)
   (completing-read prompt command-list nil t nil nil (car command-list)))
 
+(defun elixir-mix-flatten (alist)
+  (cond ((null alist) nil)
+        ((atom alist) (list alist))
+        (t (append (elixir-mix-flatten (car alist))
+                   (elixir-mix-flatten (cdr alist))))))
+
 (defun elixir-mix-new (name)
   "Create a new elixir project with mix."
   (interactive "Gmix new: ")
