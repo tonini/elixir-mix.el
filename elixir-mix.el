@@ -100,20 +100,21 @@
 ;;
 ;;        M-x elixir-mix-execute
 ;;
-;;            Run any command in the context of the application,
-;;            except `help` and `new`.
+;;            Run any command in the context of the application.
 ;;            Just run any command as you like, including arguments
 ;;            for the specific command.  (example: test --quick)
 ;;
 
 ;;; Code:
 
+(require 'compile)
+
 (defcustom elixir-mix-command "mix"
   "The shell command for mix."
   :type 'string
   :group 'elixir-mix)
 
-(defvar elixir-mix-buffer-name "*MIX*"
+(defvar elixir-mix-buffer-name "*mix*"
   "Name of the mix output buffer.")
 
 (defvar elixir-mix--elixir-project-root-indicator
@@ -128,9 +129,26 @@
   '("local" "local.install" "local.rebar" "local.uninstall")
   "List of all local.* available commands.")
 
-(defvar elixir-mix--local-install-option-types
-  '("path" "url")
+(defvar elixir-mix--compilation-buffer-name nil
+  "Used to store compilation name so recompilation works as expected.")
+(make-variable-buffer-local 'elixir-mix--compilation-buffer-name)
+
+(defvar elixir-mix--local-install-option-types '("path" "url")
   "List of local.install option types.")
+
+(defun elixir-mix--kill-any-orphan-proc ()
+  "Ensure any dangling buffer process is killed."
+  (let ((orphan-proc (get-buffer-process (buffer-name))))
+    (when orphan-proc
+      (kill-process orphan-proc))))
+
+(define-compilation-mode elixir-mix-compilation-mode "ElixirMix"
+  "Mix compilation mode."
+  (progn
+    ;; Set any bound buffer name buffer-locally
+    (setq elixir-mix--compilation-buffer-name elixir-mix--compilation-buffer-name)
+    (set (make-local-variable 'kill-buffer-hook)
+         'elixir-mix--compilation-kill-any-orphan-proc)))
 
 (defun elixir-mix--elixir-project-root (&optional directory)
   "Finds the root directory of the project by walking the
@@ -138,26 +156,30 @@
   (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory)))))
     (locate-dominating-file directory elixir-mix--elixir-project-root-indicator)))
 
-(defun elixir-mix--get-buffer (name)
-  "Get and kills a buffer if exists and returns a new one."
-  (let ((buffer (get-buffer name)))
-    (when buffer (kill-buffer buffer))
-    (generate-new-buffer name)))
+(defun elixir-mix--completing-read (prompt cmdlist)
+  (completing-read prompt cmdlist nil t nil nil (car cmdlist)))
 
-(defun elixir-mix--buffer-setup (buffer)
-  "Setup the mix buffer before display."
-  (display-buffer buffer)
-  (with-current-buffer buffer
-    (setq buffer-read-only nil)
-    (local-set-key "q" 'quit-window)))
+(defun elixir-mix--build-runner-cmdlist (command)
+  "Build the commands list for the runner."
+  (remove "" (elixir-mix-flatten
+              (list (if (stringp command)
+                        (split-string command)
+                      command)))))
 
-(defun elixir-mix--run-command-async (command)
-  (let ((buffer (elixir-mix--get-buffer elixir-mix-buffer-name)))
-    (async-shell-command (format "%s %s" elixir-mix-command command) buffer)
-    (elixir-mix--buffer-setup buffer)))
-
-(defun elixir-mix--completing-read (prompt command-list)
-  (completing-read prompt command-list nil t nil nil (car command-list)))
+(defun elixir-mix-task-runner (name cmdlist)
+  "In a buffer identified by NAME, run CMDLIST in `elixir-mix-compilation-mode'.
+Returns the compilation buffer."
+  (save-some-buffers (not compilation-ask-about-save)
+                     (when (boundp 'compilation-save-buffers-predicate)
+                       compilation-save-buffers-predicate))
+  (let* ((elixir-mix--compilation-buffer-name name))
+    (with-current-buffer
+        (compilation-start
+         (mapconcat 'shell-quote-argument
+                    (append (list elixir-mix-command) cmdlist)
+                    " ")
+         'elixir-mix-compilation-mode
+         (lambda (b) elixir-mix--compilation-buffer-name)))))
 
 (defun elixir-mix-flatten (alist)
   (cond ((null alist) nil)
@@ -168,7 +190,7 @@
 (defun elixir-mix-new (name)
   "Create a new elixir project with mix."
   (interactive "Gmix new: ")
-  (elixir-mix--run-command-async (format "new %s" name)))
+  (elixir-mix-execute (list "new" (expand-file-name name))))
 
 (defun elixir-mix-test ()
   "Run the whole elixir test suite."
@@ -183,22 +205,22 @@
 (defun elixir-mix-test-file (filename)
   "Run <mix test> with the given `filename`"
   (interactive "Fmix test: ")
-  (elixir-mix--test-file filename))
+  (elixir-mix--test-file (expand-file-name filename)))
 
 (defun elixir-mix--test-file (filename)
   (when (not (file-exists-p filename))
     (error "The given file doesn't exists"))
-  (elixir-mix-execute (format "test %s" filename)))
+  (elixir-mix-execute (list "test" (expand-file-name filename))))
 
-(defun elixir-mix-compile ()
+(defun elixir-mix-compile (command)
   "Compile the whole elixir project."
-  (interactive)
-  (elixir-mix-execute "compile"))
+  (interactive "Mmix compile: ")
+  (elixir-mix-execute (list "compile" command)))
 
-(defun elixir-mix-run (code)
-  "Runs the given expression in the elixir application context."
+(defun elixir-mix-run (command)
+  "Runs the given file or expression in the context of the application."
   (interactive "Mmix run: ")
-  (elixir-mix-execute (format "run -e '%s'" code)))
+  (elixir-mix-execute (list "run" command)))
 
 (defun elixir-mix-deps-with-prompt (command)
   "Prompt for mix deps commands."
@@ -227,30 +249,31 @@
 (defun elixir-mix-local-install-with-path (path)
   "Runs local.install and prompt for a <path> as argument."
   (interactive "fmix local.install PATH: ")
-  (elixir-mix-execute (format "local.install %s" path)))
+  (elixir-mix-execute (list "local.install" path)))
 
 (defun elixir-mix-local-install-with-url (url)
   "Runs local.install and prompt for a <url> as argument."
   (interactive "Mmix local.install URL: ")
-  (elixir-mix-execute (format "local.install %s" url)))
+  (elixir-mix-execute (list "local.install" url)))
 
 (defun elixir-mix-help (command)
   "Show help output for a specific mix command."
   (interactive "Mmix help: ")
-  (elixir-mix--run-command-async (format "help %s" command)))
+  (elixir-mix-execute (list "help" command)))
+
+(defun elixir-mix--establish-project-root-directory ()
+  "Set the default-directory to the Elixir project root."
+  (let ((project-root (elixir-mix--elixir-project-root)))
+    (if (not project-root)
+        (error "Couldn't find any elixir project root")
+      (setq default-directory project-root))))
 
 (defun elixir-mix-execute (command)
   "Run a mix command."
   (interactive "Mmix: ")
-  (cond ((string= command "") (error "There is no such command"))
-        ((string-match "^new" command)
-         (error "Please use the `elixir-mix-new (name)` function to create a new elixir project"))
-        ((string-match "^help" command)
-         (error "Please use the `elixir-mix-help (command)` function to get a mix command specific help")))
-  (let ((project-root (elixir-mix--elixir-project-root)))
-    (when (not project-root) (error "Couldn't find any elixir project root"))
-    (setq default-directory (elixir-mix--elixir-project-root))
-    (elixir-mix--run-command-async command)))
+  (elixir-mix--establish-project-root-directory)
+  (elixir-mix-task-runner elixir-mix-buffer-name
+                          (elixir-mix--build-runner-cmdlist command)))
 
 ;;;###autoload
 (define-minor-mode global-elixir-mix-mode
