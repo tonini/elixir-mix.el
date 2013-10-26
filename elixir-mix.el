@@ -150,11 +150,11 @@
     (set (make-local-variable 'kill-buffer-hook)
          'elixir-mix--compilation-kill-any-orphan-proc)))
 
-(defun elixir-mix--elixir-project-root (&optional directory)
-  "Finds the root directory of the project by walking the
-   directory tree until it finds a elixir project root indicator."
-  (let* ((directory (file-name-as-directory (or directory (expand-file-name default-directory)))))
-    (locate-dominating-file directory elixir-mix--elixir-project-root-indicator)))
+(defun elixir-mix--elixir-project-root ()
+  "Finds the root directory of the project.
+It walking the directory tree until it finds a elixir project root indicator."
+  (let* ((file (file-name-as-directory (expand-file-name default-directory))))
+    (locate-dominating-file file elixir-mix--elixir-project-root-indicator)))
 
 (defun elixir-mix--completing-read (prompt cmdlist)
   (completing-read prompt cmdlist nil t nil nil (car cmdlist)))
