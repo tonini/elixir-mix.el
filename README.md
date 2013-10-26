@@ -101,18 +101,8 @@ familiar with it.
 `elixir-mix-buffer-name` Name of the buffer used for mix shell output.
 
 ```lisp
-(setq elixir-mix-buffer-name "*MIX*")
+(setq elixir-mix-buffer-name "*mix*")
 ```
-
-## Thanks
-
-Special thanks to the following emacs open source projects, which I
-learned a lot of emacs lisp from. :-)
-
-* [cabbage](https://github.com/senny/cabbage)
-* [ruby-compilation.el](http://www.emacswiki.org/emacs/ruby-compilation.el)
-* [yasnippet](https://github.com/capitaomorte/yasnippet)
-* [EmacsWiki](http://www.emacswiki.org/emacs/)
 
 ## Contributions are very welcome!
 
