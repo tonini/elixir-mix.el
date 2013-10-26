@@ -5,7 +5,7 @@
 ;; Author: Samuel Tonini
 ;; Maintainer: Samuel Tonini
 ;; Created: So Jun  9 10:01:02 2013 (+0200)
-;; Version: 0.1.4
+;; Version: 0.2.4
 ;; URL: http://github.com/tonini/elixir-mix.el
 ;; Keywords: elixir, mix, elixir-mix
 
