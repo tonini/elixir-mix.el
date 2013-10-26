@@ -35,10 +35,7 @@
 
 ;;; Code:
 
-(provide 'elixir-mix-tests)
-
 (require 'ert)
-(require 'elixir-mix)
 
 (ert-deftest test-flatten-of-list ()
   (should (equal (elixir-mix-flatten '(1 2 (3 4) 5))
@@ -46,5 +43,16 @@
   (should (equal (elixir-mix-flatten '(1 2 ("wood" "fire" (3)) 4 5))
                  '(1 2 "wood" "fire" 3 4 5))))
 
+(ert-deftest test-mix-runner-cmdlist-builder ()
+  (should (equal (elixir-mix--build-runner-cmdlist "help")
+                 '("help")))
+  (should (equal (elixir-mix--build-runner-cmdlist '("run"))
+                 '("run")))
+  (should (equal (elixir-mix--build-runner-cmdlist "help do")
+                 '("help" "do")))
+  (should (equal (elixir-mix--build-runner-cmdlist '("help" ""))
+                 '("help"))))
+
+(provide 'elixir-mix-tests)
 
 ;;; elixir-mix-tests.el ends here
