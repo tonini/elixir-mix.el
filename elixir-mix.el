@@ -271,9 +271,12 @@ Returns the compilation buffer."
 (defun elixir-mix-execute (command)
   "Run a mix command."
   (interactive "Mmix: ")
-  (elixir-mix--establish-project-root-directory)
-  (elixir-mix-task-runner elixir-mix-buffer-name
-                          (elixir-mix--build-runner-cmdlist command)))
+  (let ((old-directory default-directory))
+    (elixir-mix--establish-project-root-directory)
+    (elixir-mix-task-runner elixir-mix-buffer-name
+                            (elixir-mix--build-runner-cmdlist command))
+    (cd old-directory)))
+  
 
 ;;;###autoload
 (define-minor-mode global-elixir-mix-mode
