@@ -136,27 +136,20 @@
 (defvar elixir-mix--local-install-option-types '("path" "url")
   "List of local.install option types.")
 
-
-
 (defun elixir-mix--compilation-kill-any-orphan-proc ()
   "Ensure any dangling buffer process is killed."
   (let ((orphan-proc (get-buffer-process (buffer-name))))
     (when orphan-proc
       (kill-process orphan-proc))))
 
-
 (define-compilation-mode elixir-mix-compilation-mode "ElixirMix"
   "Mix compilation mode."
   (progn
-
     (font-lock-add-keywords nil
                             '(("0 failures" . compilation-info-face)
                               ("\[[:digit:]]+ failures" . compilation-error-face)
                               ("^Finished in .*$" . font-lock-string-face)
                               ("^ElixirMix.*$" . font-lock-string-face)))
-
-    
-
     ;; Set any bound buffer name buffer-locally
     (setq elixir-mix--compilation-buffer-name elixir-mix--compilation-buffer-name)
     (set (make-local-variable 'kill-buffer-hook)
@@ -177,7 +170,6 @@ It walking the directory tree until it finds a elixir project root indicator."
               (list (if (stringp command)
                         (split-string command)
                       command)))))
-
 
 (defun elixir-mix-task-runner (name cmdlist)
   "In a buffer identified by NAME, run CMDLIST in `elixir-mix-compilation-mode'.
@@ -228,7 +220,6 @@ Returns the compilation buffer."
   (when (not (file-exists-p filename))
     (error "The given file doesn't exists"))
   (elixir-mix-execute (list "test" (expand-file-name filename))))
-
 
 (defun elixir-mix-compile (command)
   "Compile the whole elixir project."
@@ -294,7 +285,6 @@ Returns the compilation buffer."
     (elixir-mix-task-runner elixir-mix-buffer-name
                             (elixir-mix--build-runner-cmdlist command))
     (cd old-directory)))
-  
 
 ;;;###autoload
 (define-minor-mode global-elixir-mix-mode
