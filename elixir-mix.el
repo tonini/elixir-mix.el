@@ -136,6 +136,8 @@
 (defvar elixir-mix--local-install-option-types '("path" "url")
   "List of local.install option types.")
 
+
+
 (defun elixir-mix--kill-any-orphan-proc ()
   "Ensure any dangling buffer process is killed."
   (let ((orphan-proc (get-buffer-process (buffer-name))))
@@ -146,7 +148,14 @@
 (define-compilation-mode elixir-mix-compilation-mode "ElixirMix"
   "Mix compilation mode."
   (progn
-    (add-to-list  'compilation-finish-functions 'elixir-mix-tidy-output)
+
+    (font-lock-add-keywords nil
+                            '(("0 failures" . compilation-info-face)
+                              ("\[[:digit:]]+ failures" . compilation-error-face)
+                              ("^Finished in .*$" . font-lock-string-face)
+                              ("^ElixirMix.*$" . font-lock-string-face)))
+
+    
 
     ;; Set any bound buffer name buffer-locally
     (setq elixir-mix--compilation-buffer-name elixir-mix--compilation-buffer-name)
@@ -169,18 +178,6 @@ It walking the directory tree until it finds a elixir project root indicator."
                         (split-string command)
                       command)))))
 
-(defun elixir-mix-tidy-output (buffer msg)
-  "Remove the cruft at the start of the compilation buffer"
-  (save-excursion
-    (goto-char (point-min))
-    (let ((end-of-fluff (re-search-forward "ElixirMix started.*\n+" nil t)))
-      (when end-of-fluff
-        (delete-region (point-min) end-of-fluff)
-        )
-;;;      (goto-char (point-min))
-   ;;;   (replace-regexp "\\`\n+" "")
-    )
-))
 
 (defun elixir-mix-task-runner (name cmdlist)
   "In a buffer identified by NAME, run CMDLIST in `elixir-mix-compilation-mode'.
@@ -188,14 +185,18 @@ Returns the compilation buffer."
   (save-some-buffers (not compilation-ask-about-save)
                      (when (boundp 'compilation-save-buffers-predicate)
                        compilation-save-buffers-predicate))
-  (let* ((elixir-mix--compilation-buffer-name name))
+  (let* ((elixir-mix--compilation-buffer-name name)
+         (compilation-filter-start (point-min)))
     (with-current-buffer
         (compilation-start
          (mapconcat 'shell-quote-argument
                     (append (list elixir-mix-command) cmdlist)
                     " ")
          'elixir-mix-compilation-mode
-         (lambda (b) elixir-mix--compilation-buffer-name)))))
+         (lambda (b) elixir-mix--compilation-buffer-name))
+      (toggle-read-only)
+      (delete-matching-lines "\\(elixir-mix-compilation\\|ElixirMix started\\|\n\\)" (point-min) (point))
+      (toggle-read-only))))
 
 (defun elixir-mix-flatten (alist)
   (cond ((null alist) nil)
