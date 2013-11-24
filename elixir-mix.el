@@ -138,7 +138,7 @@
 
 
 
-(defun elixir-mix--kill-any-orphan-proc ()
+(defun elixir-mix--compilation-kill-any-orphan-proc ()
   "Ensure any dangling buffer process is killed."
   (let ((orphan-proc (get-buffer-process (buffer-name))))
     (when orphan-proc
