@@ -179,12 +179,15 @@ It walking the directory tree until it finds a elixir project root indicator."
                       command)))))
 
 
+(defvar elixir-mix--save-buffers-predicate
+  (lambda ()
+    (not (string= (substring (buffer-name) 0 1) "*"))))
+
 (defun elixir-mix-task-runner (name cmdlist)
   "In a buffer identified by NAME, run CMDLIST in `elixir-mix-compilation-mode'.
 Returns the compilation buffer."
-  (save-some-buffers (not compilation-ask-about-save)
-                     (when (boundp 'compilation-save-buffers-predicate)
-                       compilation-save-buffers-predicate))
+  (save-some-buffers (not compilation-ask-about-save) elixir-mix--save-buffers-predicate)
+
   (let* ((elixir-mix--compilation-buffer-name name)
          (compilation-filter-start (point-min)))
     (with-current-buffer
