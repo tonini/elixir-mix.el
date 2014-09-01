@@ -108,6 +108,7 @@
 ;;; Code:
 
 (require 'compile)
+(require 'ansi-color)
 
 (defcustom elixir-mix-command "mix"
   "The shell command for mix."
@@ -146,9 +147,7 @@
   "Mix compilation mode."
   (progn
     (font-lock-add-keywords nil
-                            '(("0 failures" . compilation-info-face)
-                              ("\[[:digit:]]+ failures" . compilation-error-face)
-                              ("^Finished in .*$" . font-lock-string-face)
+                            '(("^Finished in .*$" . font-lock-string-face)
                               ("^ElixirMix.*$" . font-lock-string-face)))
     ;; Set any bound buffer name buffer-locally
     (setq elixir-mix--compilation-buffer-name elixir-mix--compilation-buffer-name)
@@ -175,6 +174,13 @@ It walking the directory tree until it finds a elixir project root indicator."
   (lambda ()
     (not (string= (substring (buffer-name) 0 1) "*"))))
 
+(defun elixir-mix--handle-compilation-once ()
+  (remove-hook 'compilation-filter-hook 'elixir-mix--handle-compilation-once t)
+  (delete-matching-lines "\\(elixir-mix-compilation\\|ElixirMix started\\|\n\\)" (point-min) (point)))
+
+(defun elixir-mix--handle-compilation ()
+  (ansi-color-apply-on-region compilation-filter-start (point)))
+
 (defun elixir-mix-task-runner (name cmdlist)
   "In a buffer identified by NAME, run CMDLIST in `elixir-mix-compilation-mode'.
 Returns the compilation buffer."
@@ -189,9 +195,8 @@ Returns the compilation buffer."
                     " ")
          'elixir-mix-compilation-mode
          (lambda (b) elixir-mix--compilation-buffer-name))
-      (toggle-read-only)
-      (delete-matching-lines "\\(elixir-mix-compilation\\|ElixirMix started\\|\n\\)" (point-min) (point))
-      (toggle-read-only))))
+      (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation nil t)
+      (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation-once nil t))))
 
 (defun elixir-mix-flatten (alist)
   (cond ((null alist) nil)
