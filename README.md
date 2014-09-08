@@ -53,6 +53,10 @@ familiar with it.
         <td>Run a file through <code>mix test</code> command.</td>
     </tr>
     <tr>
+        <td><code>elixir-mix-test-at-point</code></td>
+        <td>Run the test at point.</td>
+    </tr>
+    <tr>
         <td><code>elixir-mix-compile</code></td>
         <td>Compile the whole Elixir application.</td>
     </tr>

@@ -229,6 +229,13 @@ Returns the compilation buffer."
     (error "The given file doesn't exists"))
   (elixir-mix-execute (list "test" (expand-file-name filename))))
 
+(defun elixir-mix-test-at-point ()
+  "Run the test at point."
+  (interactive)
+  (let* ((line (line-number-at-pos (point)))
+         (file-and-line (format "%s:%s" buffer-file-name line)))
+    (elixir-mix-execute (list "test" file-and-line))))
+
 (defun elixir-mix-compile (command)
   "Compile the whole elixir project."
   (interactive "Mmix compile: ")
