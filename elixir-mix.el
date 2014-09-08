@@ -137,6 +137,10 @@
 (defvar elixir-mix--local-install-option-types '("path" "url")
   "List of local.install option types.")
 
+(defvar elixir-mix--compilation-error-link-options
+  '(elixir "\\([a-z./_]+\\):\\([0-9]+\\)\\(: warning\\)?" 1 2 nil (3) 1)
+  "File link matcher for `compilation-error-regexp-alist-alist' (matches path/to/file:line).")
+
 (defun elixir-mix--compilation-kill-any-orphan-proc ()
   "Ensure any dangling buffer process is killed."
   (let ((orphan-proc (get-buffer-process (buffer-name))))
@@ -195,6 +199,9 @@ Returns the compilation buffer."
                     " ")
          'elixir-mix-compilation-mode
          (lambda (b) elixir-mix--compilation-buffer-name))
+      (setq-local compilation-error-regexp-alist-alist
+        (cons elixir-mix--compilation-error-link-options compilation-error-regexp-alist-alist))
+      (setq-local compilation-error-regexp-alist (cons 'elixir compilation-error-regexp-alist))
       (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation nil t)
       (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation-once nil t))))
 
