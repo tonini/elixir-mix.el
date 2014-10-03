@@ -66,6 +66,10 @@
 ;;
 ;;            Run a file through <mix test> command.
 ;;
+;;        M-x elixir-mix-test-at-point
+;;
+;;            Run the test at point.
+;;
 ;;        M-x elixir-mix-compile
 ;;
 ;;            Compile the whole Elixir application.
