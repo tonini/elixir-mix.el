@@ -204,7 +204,7 @@ Returns the compilation buffer."
          'elixir-mix-compilation-mode
          (lambda (b) elixir-mix--compilation-buffer-name))
       (setq-local compilation-error-regexp-alist-alist
-        (cons elixir-mix--compilation-error-link-options compilation-error-regexp-alist-alist))
+                  (cons elixir-mix--compilation-error-link-options compilation-error-regexp-alist-alist))
       (setq-local compilation-error-regexp-alist (cons 'elixir compilation-error-regexp-alist))
       (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation nil t)
       (add-hook 'compilation-filter-hook 'elixir-mix--handle-compilation-once nil t))))
@@ -223,7 +223,7 @@ Returns the compilation buffer."
 (defun elixir-mix-test ()
   "Run the whole elixir test suite."
   (interactive)
-  (elixir-mix-execute "test"))
+  (elixir-mix-execute (list "test")))
 
 (defun elixir-mix-test-this-buffer ()
   "Run the current buffer through mix test."
@@ -261,7 +261,7 @@ Returns the compilation buffer."
   "Prompt for mix deps commands."
   (interactive
    (list (elixir-mix--completing-read "mix deps: " elixir-mix--deps-commands)))
-  (elixir-mix-execute command))
+  (elixir-mix-execute (list command)))
 
 (defun elixir-mix-local-with-prompt (command)
   "Prompt for mix local commands."
@@ -269,7 +269,7 @@ Returns the compilation buffer."
    (list (elixir-mix--completing-read "mix local: " elixir-mix--local-commands)))
   (if (string= command "local.install")
       (call-interactively 'elixir-mix-local-install)
-    (elixir-mix-execute command)))
+    (elixir-mix-execute (list command))))
 
 (defun elixir-mix-local-install (path-or-url)
   "Prompt for mix local.install <path> or <url>."
@@ -307,7 +307,8 @@ Returns the compilation buffer."
   "Run a mix command."
   (interactive "Mmix: ")
   (let ((old-directory default-directory))
-    (elixir-mix--establish-project-root-directory)
+    (unless (string= (car command) "new")
+      (elixir-mix--establish-project-root-directory))
     (elixir-mix-task-runner elixir-mix-buffer-name
                             (elixir-mix--build-runner-cmdlist command))
     (cd old-directory)))
