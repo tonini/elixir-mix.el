@@ -1,3 +1,10 @@
+# DEPRECATION WARNING
+
+The `elixir-mix.el` package is now integrated in the new [alchemist.el](https://github.com/tonini/alchemist.el)
+package. Please use the `alchemist.el` package instead if you would like to use
+the same features as `elixir-mix.el` serves. `elixir-mix.el` will not be
+maintained in the future. 
+
 # elixir-mix.el
 
 [![Build Status](https://travis-ci.org/tonini/elixir-mix.el.png?branch=introduce-testing)](https://travis-ci.org/tonini/elixir-mix.el)
