@@ -122,5 +122,3 @@ familiar with it.
 4. Push to your branch - `git push origin my_branch`
 5. Send me a pull-request for your topic branch
 6. That's it!
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/b5d8e53f0a7f0bf174bab801201a53f7 "githalytics.com")](http://githalytics.com/tonini/elixir-mix.el)
